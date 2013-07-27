@@ -2,18 +2,20 @@ import re
 import math 
 from pysqlite2 import dbapi2 as sqlite
 
-def batchclassify2(classifier, filename, tag):
+def batchclassify2(classifier, filename):
 	fs = open(filename, 'r') 	
 	for line in fs:
+		fields = line.split('\t', 1)       
 		print 'predict: ', 
-		print classifier.classify(line),
+		print classifier.classify(fields[1]),
 		print  ' real: ',
-		print tag
+		print fields[0] 
 
-def batchtrain2(classifier, filename, tag):
+def batchtrain2(classifier, filename):
         fs = open(filename, 'r') 	
 	for line in fs:
-		classifier.train(line, tag)
+		fields = line.split('\t', 1)       
+		classifier.train(fields[1], fields[0])
 
 def batchtrain(classifier):
 	classifier.train('No body owns the water', 'good')
@@ -148,8 +150,5 @@ class fisherclassifier(classifier):
 c1=naivebayes(getwords)
 c1.setdb('sample.db')
 #c1=fisherclassifier(getwords)
-#c1.setdb('sample.db')
-#batchtrain2(c1, './1008.train', 1008)
-#batchtrain2(c1, './1007.train', 1007)
-batchclassify2(c1, './1007.test', 1007)
-#batchclassify2(c1, './1008.test', 1008)
+batchtrain2(c1, './data.train')
+batchclassify2(c1, './data.test')
